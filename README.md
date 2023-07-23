@@ -7,3 +7,5 @@ Required Packages:
 -FFMPeg
 -Youtube-DLP
 -PyNaCl
+
+Running on python 3.10
