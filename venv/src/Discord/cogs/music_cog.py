@@ -36,11 +36,11 @@ class music_cog(commands.Cog):
         if len(self.music_queue) > 0:
             self.is_Playing = True
             m_url = self.music_queue[0][0]['source']
+
             self.current = self.music_queue[0][0]['title']
             self.music_queue.pop(0)
 
             # keeps calling itself until the queue is empty recursively
-            print('iran')
             self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
         else:
             self.is_Playing = False
@@ -79,6 +79,7 @@ class music_cog(commands.Cog):
 
     @commands.command(name="now_playing", aliases=["np"], help=" shows what is currently being played")
     async def now_playing(self, ctx, *args):
+        print(self.current)
         if self.current is None:
             await ctx.send("Nothing is playing right now!!!")
         else:
@@ -139,12 +140,15 @@ class music_cog(commands.Cog):
             num_members = len(voice_channel.members) - 1  # account for bot
             num_success_vote = (num_members // 2) + 1
 
+            queue_length = len(self.music_queue)
             if num_members <= 2:
                 self.vc.stop()  # stop playing current song
                 self.is_Playing = False
                 self.is_Paused = False
                 await ctx.send(f"The song: **__{self.current}__** has been skipped.")
-                self.current = None
+                if queue_length == 0:
+                    self.current = None
+
                 await self.play_next(ctx)  # move next
             elif num_members > 2:
                 message = await ctx.send(f"Should **__{self.current}__** be skipped? 15 seconds to vote")
@@ -176,8 +180,11 @@ class music_cog(commands.Cog):
                         self.vc.stop()  # stop playing current song
                         self.is_Playing = False
                         self.is_Paused = False
-                        await ctx.send("The song has been skipped. Who chose this song?")
-                        self.current = None
+                        await ctx.send(f"The song: **__{self.current}__** has been skipped. Who chose this song?")
+
+                        if queue_length == 0:
+                            self.current = None
+
                         await self.play_next(ctx)  # move next
                     else:
                         await ctx.send(f"The song: **__{self.current}__** has not been skipped. Not enough votes.")
