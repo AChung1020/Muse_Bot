@@ -82,7 +82,7 @@ class music_cog(commands.Cog):
         if self.current is None:
             await ctx.send("Nothing is playing right now!!!")
         else:
-            await ctx.send(f"Currently listening to: {self.current}")
+            await ctx.send(f"Currently listening to: **__{self.current}__**")
 
     @commands.command(name="play", aliases=["p"], help="Plays the selected song from youtube")
     async def play(self, ctx, *args):
