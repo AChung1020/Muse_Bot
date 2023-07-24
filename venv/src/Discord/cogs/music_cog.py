@@ -199,7 +199,7 @@ class music_cog(commands.Cog):
         num_queue = int(query)
 
         if self.vc is not None and self.is_Playing:
-            if num <= len(self.music_queue):
+            if num_queue <= len(self.music_queue):
                 voice_channel = ctx.author.voice.channel
                 num_members = len(voice_channel.members) - 1  # account for bot
                 num_success_vote = (num_members // 2) + 1
