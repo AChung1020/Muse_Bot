@@ -160,23 +160,23 @@ class music_cog(commands.Cog):
                         react.message == message
 
                 try:
-                    thumbs_up_count = 0
-                    thumbs_down_count = 0
+                    Check_Count = 0
+                    X_Count = 0
 
                     # while loop runs until all votes counted
                     while True:
                         reaction, _ = await self.bot.wait_for('reaction_add', timeout=15.0, check=check)
 
                         if str(reaction.emoji) == '\u2705':
-                            thumbs_up_count += 1
+                            Check_Count += 1
                         elif str(reaction.emoji) == '\u274C':
-                            thumbs_down_count += 1
+                            X_Count += 1
 
-                        total_votes = thumbs_up_count + thumbs_down_count
+                        total_votes = Check_Count + X_Count
                         if total_votes >= num_members or total_votes >= num_success_vote:
                             break
 
-                    if thumbs_up_count >= num_success_vote:
+                    if Check_Count >= num_success_vote:
                         self.vc.stop()  # stop playing current song
                         self.is_Playing = False
                         self.is_Paused = False
@@ -196,7 +196,7 @@ class music_cog(commands.Cog):
     @commands.command(name="remove", aliases=["rem"], help="Removes specific song in queue")
     async def remove(self, ctx, *args):
         query = " ".join(args)
-        num = int(query)
+        num_queue = int(query)
 
         if self.vc is not None and self.is_Playing:
             if num <= len(self.music_queue):
@@ -205,11 +205,11 @@ class music_cog(commands.Cog):
                 num_success_vote = (num_members // 2) + 1
 
                 if num_members <= 2:
-                    removed = self.music_queue[num-1][0]['title']
-                    self.music_queue.pop(num-1)
+                    removed = self.music_queue[num_queue-1][0]['title']
+                    self.music_queue.pop(num_queue-1)
                     await ctx.send(f"The song: **__{removed}__** was removed from queue!!!")
                 elif num_members > 2:
-                    removed = self.music_queue[num - 1][0]['title']
+                    removed = self.music_queue[num_queue - 1][0]['title']
                     message = await ctx.send(f"Should **__{removed}__** be removed? 15 seconds to vote")
                     await message.add_reaction('\u2705')
                     await message.add_reaction('\u274C')
@@ -219,25 +219,25 @@ class music_cog(commands.Cog):
                             react.message == message
 
                     try:
-                        thumbs_up_count = 0
-                        thumbs_down_count = 0
+                        Check_Count = 0
+                        X_Count = 0
 
                         # while loop runs until all votes counted
                         while True:
                             reaction, _ = await self.bot.wait_for('reaction_add', timeout=15.0, check=check)
 
                             if str(reaction.emoji) == '\u2705':
-                                thumbs_up_count += 1
+                                Check_Count += 1
                             elif str(reaction.emoji) == '\u274C':
-                                thumbs_down_count += 1
+                                X_Count += 1
 
-                            total_votes = thumbs_up_count + thumbs_down_count
+                            total_votes = Check_Count + X_Count
                             if total_votes >= num_members or total_votes >= num_success_vote:
                                 break
 
-                        if thumbs_up_count >= num_success_vote:
-                            removed = self.music_queue[num-1][0]['title']
-                            self.music_queue.pop(num-1)
+                        if Check_Count >= num_success_vote:
+                            removed = self.music_queue[num_queue-1][0]['title']
+                            self.music_queue.pop(num_queue-1)
                             await ctx.send(f"The song: **__{removed}__** was removed from queue!!!")
                         else:
                             await ctx.send("The song has not been removed. Not enough votes!!!")
