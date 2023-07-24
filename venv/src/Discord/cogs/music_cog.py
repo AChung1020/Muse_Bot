@@ -14,7 +14,12 @@ class music_cog(commands.Cog):
 
         self.is_Playing = False
         self.is_Paused = False
+
+        # current song
         self.current = None
+
+        # person who queued current song
+        self.person = None
 
         self.music_queue = []
         # settings for optimal audio
@@ -38,6 +43,7 @@ class music_cog(commands.Cog):
             m_url = self.music_queue[0][0]['source']
 
             self.current = self.music_queue[0][0]['title']
+            self.person = self.music_queue[0][0]['title']
             self.music_queue.pop(0)
 
             # keeps calling itself until the queue is empty recursively
@@ -45,13 +51,14 @@ class music_cog(commands.Cog):
         else:
             self.is_Playing = False
 
-    def search_yt(self, item):
+    def search_yt(self, item, person_queue):
         with YoutubeDL(self.ydl_opts) as ydl:
             try:
                 # make sure video is not in playlist before you play the song
                 info = ydl.sanitize_info(ydl.extract_info(f"ytsearch:{item}"))['entries'][0]
                 source = f"Discord/Song_Downloads/{info['id']}.m4a"
-                return {'source': source, 'title': info['title']}
+
+                return {'source': source, 'title': info['title'], 'Queuer': person_queue}
             except Exception:
                 return False
 
@@ -79,7 +86,6 @@ class music_cog(commands.Cog):
 
     @commands.command(name="now_playing", aliases=["np"], help=" shows what is currently being played")
     async def now_playing(self, ctx, *args):
-        print(self.current)
         if self.current is None:
             await ctx.send("Nothing is playing right now!!!")
         else:
@@ -91,9 +97,11 @@ class music_cog(commands.Cog):
         print(query)
 
         voice_channel = ctx.author.voice
+        person_queue = ctx.author.mention
+
         if voice_channel:
             print(voice_channel.channel)
-            song = self.search_yt(query)
+            song = self.search_yt(query, person_queue)
             if isinstance(song, bool):
                 await ctx.send("Could not play song. Try different keywords or make sure song is not in a playlist.")
             else:
@@ -103,6 +111,7 @@ class music_cog(commands.Cog):
                 if not self.is_Playing:
                     await ctx.send(f"Listening to: {self.music_queue[0][0]['title']}")
                     self.current = self.music_queue[0][0]['title']
+                    self.person = self.music_queue[0][0]['Queuer']
                     await self.play_music(ctx)
         elif self.is_Paused is True:
             self.vc.resume()
@@ -145,9 +154,11 @@ class music_cog(commands.Cog):
                 self.vc.stop()  # stop playing current song
                 self.is_Playing = False
                 self.is_Paused = False
+
                 await ctx.send(f"The song: **__{self.current}__** has been skipped.")
                 if queue_length == 0:
                     self.current = None
+                    self.person = None
 
                 await self.play_next(ctx)  # move next
             elif num_members > 2:
@@ -180,10 +191,14 @@ class music_cog(commands.Cog):
                         self.vc.stop()  # stop playing current song
                         self.is_Playing = False
                         self.is_Paused = False
-                        await ctx.send(f"The song: **__{self.current}__** has been skipped. Who chose this song?")
+
+                        await ctx.send(f"The song: **__{self.current}__** has been skipped.\n"
+                                       f" Who put this shit song here? \n"
+                                       f"Of course it was {self.person} !")
 
                         if queue_length == 0:
                             self.current = None
+                            self.person = None
 
                         await self.play_next(ctx)  # move next
                     else:
@@ -205,8 +220,8 @@ class music_cog(commands.Cog):
                 num_success_vote = (num_members // 2) + 1
 
                 if num_members <= 2:
-                    removed = self.music_queue[num_queue-1][0]['title']
-                    self.music_queue.pop(num_queue-1)
+                    removed = self.music_queue[num_queue - 1][0]['title']
+                    self.music_queue.pop(num_queue - 1)
                     await ctx.send(f"The song: **__{removed}__** was removed from queue!!!")
                 elif num_members > 2:
                     removed = self.music_queue[num_queue - 1][0]['title']
@@ -236,9 +251,13 @@ class music_cog(commands.Cog):
                                 break
 
                         if Check_Count >= num_success_vote:
-                            removed = self.music_queue[num_queue-1][0]['title']
-                            self.music_queue.pop(num_queue-1)
-                            await ctx.send(f"The song: **__{removed}__** was removed from queue!!!")
+                            removed = self.music_queue[num_queue - 1][0]['title']
+
+                            self.music_queue.pop(num_queue - 1)
+                            user_id = self.music_queue[num_queue - 1][0]['Queuer']
+                            await ctx.send(f"The song: **__{removed}__** has been skipped.\n"
+                                           f" Who put this shit song here? \n"
+                                           f" Of course it was {user_id} !")
                         else:
                             await ctx.send("The song has not been removed. Not enough votes!!!")
                     except asyncio.TimeoutError:
@@ -268,6 +287,8 @@ class music_cog(commands.Cog):
             self.vc.stop()
             self.is_Playing = False
             self.is_Paused = False
+            self.current = None
+            self.person = None
             self.music_queue.clear()
             await ctx.send("cleared music queue!!!")
         else:
@@ -279,6 +300,8 @@ class music_cog(commands.Cog):
         if self.vc is not None:
             self.is_Playing = False
             self.is_Paused = False
+            self.current = None
+            self.person = None
             await self.vc.disconnect()
             await ctx.send("bot kicked!!!")
             self.vc = None
