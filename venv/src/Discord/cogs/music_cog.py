@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import os
 from discord.ext import commands
 from yt_dlp import YoutubeDL
 
@@ -7,6 +8,7 @@ from yt_dlp import YoutubeDL
 # TODO: pick out the video from playlist that you want to play
 # TODO: Connect spotify API, add song titles to queue from a playlist, or add songs to a playlist
 # TODO: Make queue look better, get the album cover or something to display
+# TODO: Clean Up code. Lots of repetitive methods
 # note to self: if FFMPeg does not work, just restart pycharm and file -> invalidate cache, dont click anything else
 class music_cog(commands.Cog):
 
@@ -48,10 +50,26 @@ class music_cog(commands.Cog):
             self.person = self.music_queue[0][0]['Queuer']
             self.music_queue.pop(0)
 
+            def remove_music():
+                if len(self.music_queue) == 0:
+                    os.remove(f"{m_url}")
+                    return
+                for item in self.music_queue:
+                    if 'source' in item[0] and item[0]['source'] == m_url:
+                        return  # The song is still in the queue, don't remove it
+                # If the loop completes without finding the song in the queue, and it's not the next song, remove it
+                next_url = self.music_queue[0][0]['source'] if self.music_queue[0] else None
+                if next_url != m_url:
+                    os.remove(f"{m_url}")
+
             # keeps calling itself until the queue is empty recursively
-            self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
+            self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: (remove_music(),
+                                                                                                self.play_next()))
+
         else:
             self.is_Playing = False
+            self.current = None
+            self.person = None
 
     def search_yt(self, item, person_queue):
         with YoutubeDL(self.ydl_opts) as ydl:
@@ -82,9 +100,26 @@ class music_cog(commands.Cog):
             # pops currently playing music from queue
             self.music_queue.pop(0)
             # starts playing the song
-            self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
+
+            def remove_music():
+                if len(self.music_queue) == 0:
+                    os.remove(f"{m_url}")
+                    return
+                for item in self.music_queue:
+                    if 'source' in item[0] and item[0]['source'] == m_url:
+                        return  # The song is still in the queue, don't remove it
+                # If the loop completes without finding the song in the queue, and it's not the next song, remove it
+                next_url = self.music_queue[0][0]['source'] if self.music_queue[0] else None
+                if next_url != m_url:
+                    os.remove(f"{m_url}")
+
+            self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: (remove_music(),
+                                                                                                self.play_next()))
+
         else:
             self.is_Playing = False
+            self.current = None
+            self.person = None
 
     @commands.command(name="now_playing", aliases=["np"], help=" shows what is currently being played")
     async def now_playing(self, ctx, *args):
@@ -215,7 +250,10 @@ class music_cog(commands.Cog):
         query = " ".join(args)
         num_queue = int(query)
 
-        if self.vc is not None and self.is_Playing:
+        if num_queue > len(self.music_queue):
+            await ctx.send("Does not exist in queue!!!")
+
+        elif self.vc is not None and self.is_Playing:
             if num_queue <= len(self.music_queue):
                 voice_channel = ctx.author.voice.channel
                 num_members = len(voice_channel.members) - 1  # account for bot
@@ -274,7 +312,7 @@ class music_cog(commands.Cog):
     async def queue(self, ctx):
         retval = ""
         for i in range(0, len(self.music_queue)):
-            if i > 4:
+            if i > 5:
                 break
             retval += str(i) + '. ' + self.music_queue[i][0]['title'] + '\n'
 
