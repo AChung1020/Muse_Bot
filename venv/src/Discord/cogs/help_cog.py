@@ -13,6 +13,7 @@ class help_cog(commands.Cog):
         /p or /play [URL] or [search words] - play a song!
         /q or /queue - see whats playing next!
         /skip - skip song
+        /remove [number in queue] - removes queued song
         /clear - clear all songs
         /dc - kick me from the channel onii chan ~~~
         /pause - pauses song
