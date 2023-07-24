@@ -9,15 +9,15 @@ class help_cog(commands.Cog):
         self.help_message = """
         ```
         General Commands:
-        /help - list of commands if you forget you baka ~~~
+        /help - list of commands 
         /p or /play [URL] or [search words] - play a song!
         /q or /queue - see whats playing next!
         /skip - skip song
         /remove [number in queue] - removes queued song
         /clear - clear all songs
-        /dc - kick me from the channel onii chan ~~~
+        /dc - kick bot from channel
         /pause - pauses song
-        /resume - you get the point
+        /resume - resumes song
         /now_playing or /np - shows what is currently playing
 
         To Start, use /play with a link from youtube
