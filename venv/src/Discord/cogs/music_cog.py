@@ -9,6 +9,8 @@ from yt_dlp import YoutubeDL
 # TODO: Make queue look better, get the album cover or something to display
 # note to self: if FFMPeg does not work, just restart pycharm and file -> invalidate cache, dont click anything else
 class music_cog(commands.Cog):
+
+    # in future database would contain all this information, for now, just global variables
     def __init__(self, bot):
         self.bot = bot
 
@@ -43,7 +45,7 @@ class music_cog(commands.Cog):
             m_url = self.music_queue[0][0]['source']
 
             self.current = self.music_queue[0][0]['title']
-            self.person = self.music_queue[0][0]['title']
+            self.person = self.music_queue[0][0]['Queuer']
             self.music_queue.pop(0)
 
             # keeps calling itself until the queue is empty recursively
@@ -252,9 +254,9 @@ class music_cog(commands.Cog):
 
                         if Check_Count >= num_success_vote:
                             removed = self.music_queue[num_queue - 1][0]['title']
-
-                            self.music_queue.pop(num_queue - 1)
                             user_id = self.music_queue[num_queue - 1][0]['Queuer']
+                            self.music_queue.pop(num_queue - 1)
+
                             await ctx.send(f"The song: **__{removed}__** has been skipped.\n"
                                            f" Who put this shit song here? \n"
                                            f" Of course it was {user_id} !")
