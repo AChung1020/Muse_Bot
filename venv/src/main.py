@@ -1,8 +1,10 @@
+import pymongo
 import discord
 from discord.ext import commands
 import os
 import asyncio
 from dotenv import load_dotenv
+from MongoDB import connect_database
 
 load_dotenv()
 
@@ -29,9 +31,13 @@ async def load():
 
 
 async def main():
+    connect_database.get_mongo_client()
+
     async with bot:
         await load()
         await bot.start(os.getenv("DISCORD_TOKEN"))
+
+    # client.close()
 
 asyncio.run(main())
 
