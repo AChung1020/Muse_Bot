@@ -6,7 +6,6 @@ Required Packages:Asyncio
 - FFMPeg
 - Youtube-DLP
 - PyNaCl
-
-Utilizing Mongo_DB atlas to store bot state 
+- Utilizing Mongo_DB atlas to store bot state 
  
 Running on python 3.10 
