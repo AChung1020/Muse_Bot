@@ -1,7 +1,7 @@
-from MongoDB.connect_database import db
+from Database.connect_database import db
 
 session = {
-    "server_ID": "",
+    "server_ID": "",  # every server has unique ID, so use this to search for the document that corresponds to server
     "is_Playing": False,
     "is_Paused": False,
     # current song

@@ -19,7 +19,7 @@ def get_mongo_client():
     client = MongoClient(os.getenv("MONGO_URI"), server_api=ServerApi('1'))
 
     client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
+    print("Pinged your deployment. You successfully connected to Database!")
 
     db = client.Discord_Music_db
 
