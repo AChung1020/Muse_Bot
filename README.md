@@ -2,7 +2,7 @@
 A music bot for voice channels in discord
 
 Required Packages:
--Asyncio
+-Asyncio \n
 -Discord.py
 -FFMPeg
 -Youtube-DLP
