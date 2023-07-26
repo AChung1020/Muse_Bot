@@ -1,6 +1,7 @@
 from MongoDB.connect_database import db
 
 session = {
+    "server_ID": "",
     "is_Playing": False,
     "is_Paused": False,
     # current song
