@@ -4,7 +4,7 @@ from discord.ext import commands
 import os
 import asyncio
 from dotenv import load_dotenv
-from MongoDB import connect_database
+from Database import connect_database
 
 load_dotenv()
 
