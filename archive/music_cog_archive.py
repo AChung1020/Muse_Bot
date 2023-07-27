@@ -147,6 +147,7 @@ class music_cog(commands.Cog):
             else:
                 if self.is_Playing:
                     await ctx.send("Song added to queue")
+
                 self.music_queue.append([song, voice_channel.channel])
                 if not self.is_Playing:
                     await ctx.send(f"Listening to: {self.music_queue[0][0]['title']}")
