@@ -102,7 +102,7 @@ class BasicCommands_cog(commands.Cog):
 
     # need fix
     @commands.command(name="disconnect", aliases=["dc"], help="Forces bot to leave the vc")
-    async def kick(self, ctx):
+    async def disconnect(self, ctx):
         server_ID = ctx.message.guild.id
         document = find_document(server_ID)
         vc = discord.utils.get(self.bot.voice_clients, guild=ctx.guild)
