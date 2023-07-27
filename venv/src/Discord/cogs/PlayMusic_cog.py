@@ -41,21 +41,27 @@ class PlayMusic_cog(commands.Cog):
     def play_next(self, vc, document, id):
         # if there is music in queue
         music_queue = document.get("music_queue", [])
+        print(len(music_queue))
         collection = music_sessions()
         if len(music_queue) > 0:
             document['is_Playing'] = True
             m_url = music_queue[0]['source']
 
-            update = {
-                "$set": {
-                    "is_Playing": True,
-                    "current_track": music_queue[0]['title'],
-                    "current_person": music_queue[0]['queuer'],
-                    "music_queue": music_queue[1:]  # Pop the first item from the queue
+            try:
+                update = {
+                    "$set": {
+                        "is_Playing": True,
+                        "current_track": music_queue[0]['title'],
+                        "current_person": music_queue[0]['queuer'],
+                        "music_queue": music_queue[1:]  # Pop the first item from the queue
+                    }
                 }
-            }
-
-            collection.update_one({"_id": id}, update)
+                collection.update_one({"_id": id}, update)
+                print(id)
+                print(find_document(id))
+                print("update successful")
+            except Exception as e:
+                print("Error during update:", e)
 
             # def remove_music():
             #     if len(self.music_queue) == 0:
@@ -153,6 +159,7 @@ class PlayMusic_cog(commands.Cog):
     @commands.command(name="now_playing", aliases=["np"], help=" shows what is currently being played")
     async def now_playing(self, ctx):
         document = find_document(ctx.message.guild.id)
+        print(document)
 
         if document['current_track'] is None:
             await ctx.send("Nothing is playing right now!!!")
