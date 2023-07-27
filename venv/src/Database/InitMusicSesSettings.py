@@ -1,7 +1,7 @@
 from Database.connect_database import db
 
 session = {
-    "server_ID": "",  # every server has unique ID, so use this to search for the document that corresponds to server
+    "_id": None,  # every server has unique ID, so use this to search for the document that corresponds to server
     "is_Playing": False,
     "is_Paused": False,
     # current song
@@ -10,7 +10,7 @@ session = {
     "current_person": None,
     "music_queue": [],
     # settings for optimal audio
-    "vc": None
+    "vc": False
 }
 
 # test post function
