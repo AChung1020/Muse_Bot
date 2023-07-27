@@ -1,4 +1,3 @@
-import pymongo
 import discord
 from discord.ext import commands
 import os
@@ -19,7 +18,7 @@ bot = commands.Bot(command_prefix='/', intents=intents, help_command=None)
 @bot.event
 async def on_ready():
     print("Bot is ready")
-    activity = discord.Activity(type=discord.ActivityType.playing, name="TESTING! DON'T USE")
+    activity = discord.Activity(type=discord.ActivityType.playing, name="Quality Music")
     await bot.change_presence(activity=activity)
 
 
