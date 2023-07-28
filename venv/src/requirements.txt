@@ -1,0 +1,9 @@
+FFMPeg
+youtube-dlp
+discord.py
+discord-ext
+discord
+py-nacl
+pymongo
+asyncio
+python-dotenv
