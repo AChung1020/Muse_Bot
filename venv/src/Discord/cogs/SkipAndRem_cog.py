@@ -24,7 +24,7 @@ class SkipAndRem_cog(commands.Cog):
             num_success_vote = (num_members // 2) + 1
 
             queue_length = len(music_queue)
-            if num_members > 2:
+            if num_members <= 2:
                 vc.stop()  # stop playing current song
 
                 await ctx.send(f"The song: **__{document['current_track']}__** has been skipped.")
@@ -36,7 +36,7 @@ class SkipAndRem_cog(commands.Cog):
                     collection.update_one({"_id": server_ID}, {"$set": document})
 
                 await self.play_next(vc, find_document(server_ID), server_ID)  # move next
-            elif num_members <= 2:
+            elif num_members > 2:
                 message = await ctx.send(
                     f"Should **__{document['current_track']}__** be skipped? 15 seconds to vote")
                 await message.add_reaction('\u2705')
@@ -67,7 +67,7 @@ class SkipAndRem_cog(commands.Cog):
                         vc.stop()  # stop playing current song
 
                         await ctx.send(f"The song: **__{document['current_track']}__** has been skipped.\n"
-                                       f" Who put this shit song here? \n"
+                                       f" Who put this song here? \n"
                                        f"Of course it was {document['current_person']} !")
 
                         if queue_length == 0:
@@ -144,7 +144,7 @@ class SkipAndRem_cog(commands.Cog):
                             collection.update_one({"_id": server_ID}, {"$set": {"music_queue": music_queue}})
 
                             await ctx.send(f"The song: **__{removed}__** has been skipped.\n"
-                                           f" Who put this shit song here? \n"
+                                           f" Who put this song here? \n"
                                            f" Of course it was {user_id} !")
                         else:
                             await ctx.send("The song has not been removed. Not enough votes!!!")
