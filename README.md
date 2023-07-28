@@ -19,9 +19,9 @@ enhance your Discord server experience.
   - Discord.py
 - FFMPeg
 - Youtube-DLP
-  - pymongo
 - Database
   - MongoDB Atlas
+  - pymongo
  
 ---
 ## Features
