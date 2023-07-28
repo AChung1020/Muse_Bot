@@ -1,7 +1,7 @@
 # <u> Muse_Bot </u>
 ##
 
-![Bot Logo](Logo.png)
+![Bot Logo](ReadMe/Logo.png)
 
 A multi-server music bot for all your music needs!
 Muse_Bot powerful and feature-rich bot developed to 
