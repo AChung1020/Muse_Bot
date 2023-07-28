@@ -7,3 +7,4 @@ py-nacl
 pymongo
 asyncio
 python-dotenv
+os
